@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Person ID - {{Person.uid}}</title>
+</head>
+<body>
+    <div>
+        <p>Name: {{ Person.Name }} </p>
+        <p>Surname: {{ Person.Surname }}</p>
+        <p>Age: {{ Person.Age }}</p>
+    </div>
+    
+    <pdf:if>
+        % Person.Age < 18 %
+        {
+            {{ Person.Name }} can't drink
+        }
+
+        % Person.Age >= 21 %
+        {
+            {{ Person.Name }} can drink but not in the U.S
+        }
+
+        % else % 
+        {
+            <p> {{ Person.Name }} can drink any where</p>
+        }
+
+    </pdf:if>
+
+</body>
+</html>
