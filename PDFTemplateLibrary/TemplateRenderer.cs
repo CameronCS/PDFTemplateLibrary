@@ -1,10 +1,10 @@
 ﻿namespace PDFTemplateLibrary;
 
 public class TemplateRenderer {
-    public static PDFDocument RenderDocument(string templatePath, string filename, object DataObject) {
-        PDFDocumentGenerator PDFRenderer = new(templatePath, filename);
+    public static PdfDocument RenderDocument(string templatePath, string filename, object DataObject) {
+        PdfDocumentGenerator PDFRenderer = new(templatePath, filename);
         PDFRenderer.CreatePDFObject(DataObject);
-        PDFDocument document = PDFRenderer.GenerateDocument();
+        PdfDocument document = PDFRenderer.GenerateDocument();
         return document;
     }
 }

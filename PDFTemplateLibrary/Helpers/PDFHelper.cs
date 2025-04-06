@@ -1,9 +1,9 @@
-﻿using PDFTemplateLibrary.ClassMembers;
+﻿using PDFTemplateLibrary.PDFMembers;
 using PDFTemplateLibrary.Enums;
 using PDFTemplateLibrary.Enums.Helper;
 
 namespace PDFTemplateLibrary.Helpers {
-    internal class PDFHelper {
+    internal static class PDFHelper {
         public const int LEFT_LINE_SECTION = 0;
         public const int VALUE_LINE_SECTION = 1;
         public const int RIGHT_LINE_SECTION = 2;
@@ -25,19 +25,19 @@ namespace PDFTemplateLibrary.Helpers {
             return [.. ifBody];
         }
 
-        public static int[] GetConditionIndicies(string[] ifBody) {
-            List<int> indicies = [];
+        public static int[] GetConditionIndices(string[] ifBody) {
+            List<int> indices = [];
             for (int i = 0; i < ifBody.Length; i++) {
                 if (ifBody[i].Contains('%')) {
-                    indicies.Add(i);
+                    indices.Add(i);
                 }
             }
 
-            if (indicies.Count == 0) {
+            if (indices.Count == 0) {
                 throw new Exception("No conditions found in the if statement.");
             }
 
-            return [.. indicies];
+            return [.. indices];
         }
 
         public static bool EvaluateCondition(string condition, ref Dictionary<string, PDFMemberType> objectReference) {

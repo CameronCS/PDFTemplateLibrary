@@ -1,4 +1,4 @@
-﻿using PDFTemplateLibrary.ClassMembers;
+﻿using PDFTemplateLibrary.PDFMembers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +8,7 @@ using System.Threading.Tasks;
 namespace PDFTemplateLibrary.Enums.Helper {
     internal class ConditionHelper {
         public static ConditionOperator GetConditionOperator(string line) {
-            if (line.Contains('='))
-                return ConditionOperator.Equal;
 
-            if (line.Contains('>'))
-                return ConditionOperator.GreaterThan;
-
-            if (line.Contains('<'))
-                return ConditionOperator.LessThan;
 
             if (line.Contains(">="))
                 return ConditionOperator.GreaterThanOrEqual;
@@ -25,6 +18,15 @@ namespace PDFTemplateLibrary.Enums.Helper {
 
             if (line.Contains("!="))
                 return ConditionOperator.NotEqual;
+            
+            if (line.Contains('='))
+                return ConditionOperator.Equal;
+
+            if (line.Contains('>'))
+                return ConditionOperator.GreaterThan;
+            
+            if (line.Contains('<'))
+                return ConditionOperator.LessThan;
 
             throw new FormatException("Invalid condition operator in line: " + line);
         }
