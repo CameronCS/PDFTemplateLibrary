@@ -37,7 +37,7 @@ public class PDFMemberHelper {
                             }
                         }
 
-                        objectReference[$"{key}.Count"] = new("Count", typeof(int), index);
+                        objectReference[$"{key}.Count".ToLower()] = new("Count", typeof(int), index);
                     } else {
                         GetPDFMemberTypeFromProperty(ref nestedInstance, memberType, ref objectReference, key);
                     }
@@ -72,6 +72,7 @@ public class PDFMemberHelper {
             typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal), typeof(string),
             typeof(Boolean), typeof(Byte), typeof(SByte), typeof(Int16), typeof(UInt16), typeof(Int32), typeof(UInt32),
             typeof(Int64), typeof(UInt64), typeof(Single), typeof(Double), typeof(Decimal), typeof(String),
+            typeof(DateTime)
         ];
         return types.Contains(MemberType);
     }

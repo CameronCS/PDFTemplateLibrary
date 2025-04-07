@@ -13,7 +13,27 @@ internal static class Program {
                 new() {  Id = 1, Name = "Michael", Surname = "Yanioglou", Age = 22, NickName = "Miguel" },
             ]
         };
-        PdfDocument document = TemplateRenderer.RenderDocument("Person.html", "PersonPDF", cameron);
+        PdfDocument document = TemplateRenderer.RenderDocument("Person/Person.html", "Person/PersonPDF", cameron);
+        File.WriteAllBytes(document.FileFullName, document.PDF);
+        
+        
+        ProjectReport report = new()
+        {
+            Title = "Website Redesign",
+            Manager = "Ava Johnson",
+            DateCreated = DateTime.Now,
+            Status = "In Progress",
+            TeamMembers = new List<string> { "Ava Johnson", "Liam Smith", "Emma Davis", "Noah Lee" },
+            Tasks = new List<TaskItem>
+            {
+                new TaskItem { Title = "Create wireframes", AssignedTo = "Emma Davis", IsCompleted = true },
+                new TaskItem { Title = "Build landing page", AssignedTo = "Noah Lee", IsCompleted = false },
+                new TaskItem { Title = "Write content", AssignedTo = "Liam Smith", IsCompleted = false },
+                new TaskItem { Title = "Client review", AssignedTo = "Ava Johnson", IsCompleted = false },
+            }
+        };
+
+        document = TemplateRenderer.RenderDocument("ProjectReport/ProjectReport.html", "ProjectReport/ProjectReportPDF", report);
         File.WriteAllBytes(document.FileFullName, document.PDF);
     }
 }

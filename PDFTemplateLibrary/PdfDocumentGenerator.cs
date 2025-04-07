@@ -55,7 +55,7 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
                 string[] forEachMembers = iteration.As.Split("||");
                 string collectionName = forEachMembers[0];
                 string itemName = forEachMembers[1];
-                iteration.End = (int)this._objectReference[iteration.EndEvaluator].Value;
+                iteration.End = (int)this._objectReference[iteration.EndEvaluator.ToLower()].Value;
                 int forStartIndex = currentLineNumber;
                 int forEndIndex = this.FindEndIndex(forStartIndex, PDFCheck.PDF_FOREACH_CLOSE_TAG);
                 while (iteration.Current != iteration.End) {
@@ -83,7 +83,7 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
             if (this.IsPDFFor(line)) {
                 IterationMember iteration = IterationHelper.GetIterationItem(line.Trim());
                 if (iteration.End == -1)
-                    iteration.End = (int)this._objectReference[$"{iteration.EndEvaluator}"].Value;
+                    iteration.End = (int)this._objectReference[iteration.EndEvaluator.ToLower()].Value;
 
                 int forStartIndex = currentLineNumber;
                 int forEndIndex = this.FindEndIndex(forStartIndex, PDFCheck.PDF_FOR_CLOSE_TAG);
