@@ -19,14 +19,7 @@
 ## ⚠️ Limitations
 
 - ❌ No expression evaluation — you **cannot** use math, logic, or ternary operations inside `{{ }}`
-- 📏 All `{{ variable }}` tokens must be on their **own line**  
-  ✅ Allowed:  
-  ```html
-  <p>
-      {{ Person.Name }}
-  </p>
-  ```  
-  ❌ Not allowed:  
+- 📏 Onlt a single `{{ variable }}` token can be on one line **own line**    
   ```html
   <p>Name: {{ Person.Name }}</p>
   ```
@@ -38,14 +31,14 @@
 ### 1. **Direct Binding**
 ```html
 <p>
-    {{ User.Name }}
+    Current Usernaem: {{ User.Name }}
 </p>
 ```
 
 ### 2. **Method Calls**
 ```html
 <p>
-    {{ Report.GetFormattedDate }}
+    {{ Report.GetFormattedDate() }}
 </p>
 ```
 
@@ -55,21 +48,21 @@
     % User.Age < 18 %
     {
         <p>
-            {{ User.Name }}
+            {{ User.Name }} is a child
         </p>
     }
 
     % User.Age >= 21 %
     {
         <p>
-            {{ User.Name }}
+            {{ User.Name }} is in their early twenties
         </p>
     }
 
     % else %
     {
         <p>
-            {{ User.Name }}
+            Mr/Mrs. {{ User.Surname }} is old
         </p>
     }
 </pdf-if>
@@ -99,7 +92,7 @@
 
 To expose methods or computed properties to the template engine, mark them with:
 
-### `PDFCallAttribute`
+### `PDFCall` Attribute
 
 ```csharp
 [PDFCall]
@@ -108,10 +101,20 @@ public string GetFormattedDate() {
 }
 ```
 
-You can also apply this to computed properties:
+To keep properties for internal method use you can exclude them using the:
+### `PDFIgnore` Attribute
+
 ```csharp
-[PDFCall]
-public string StatusLabel => IsActive ? "Active" : "Inactive";
+[PDFIgnore] public int ItemModifier { get; set; }
+public int CostPrice { get; set; }
+[PDFIgnore] public char CurrencySymbol { get; set; }
+
+[PDFCall] public string GetTotalPrice() {
+    int finalPrice = CostPrice * ItemModifier;
+    string formattedPrice = $"{CurrencySymbol} {finalPrice}";
+    return formattedPrice;
+}
+
 ```
 
 ---
@@ -119,15 +122,26 @@ public string StatusLabel => IsActive ? "Active" : "Inactive";
 ## 🛠 Usage
 
 ```csharp
-var engine = new TemplateEngine();
-var html = File.ReadAllText("template.html");
+public static void Main() {
+    ProjectReport report = new()
+    {
+        Title = "Website Redesign",
+        Manager = "Ava Johnson",
+        DateCreated = DateTime.Now,
+        Status = "In Progress",
+        TeamMembers = new List<string> { "Ava Johnson", "Liam Smith", "Emma Davis", "Noah Lee" },
+        Tasks = new List<TaskItem>
+        {
+            new TaskItem { Title = "Create wireframes", AssignedTo = "Emma Davis", IsCompleted = true },
+            new TaskItem { Title = "Build landing page", AssignedTo = "Noah Lee", IsCompleted = false },
+            new TaskItem { Title = "Write content", AssignedTo = "Liam Smith", IsCompleted = false },
+            new TaskItem { Title = "Client review", AssignedTo = "Ava Johnson", IsCompleted = false },
+        }
+    };
 
-var result = engine.Render(html, new {
-    Person = person,
-    Report = report
-});
-
-engine.GeneratePdf(result, "output.pdf");
+    PDFDocument document = TemplateRenderer.RenderDocument("ProjectReport/ProjectReport.html", "ProjectReport/ProjectReportPDF", report);
+    File.WriteAllBytes(document.FileFullName, document.PDF); // Write the PDF file as bytes
+}
 ```
 
 ---
