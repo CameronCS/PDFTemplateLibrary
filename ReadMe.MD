@@ -20,10 +20,16 @@
 
 - ❌ No expression evaluation — you **cannot** use math, logic, or ternary operations inside `{{ }}`
 - 📏 Onlt a single `{{ variable }}` token can be on one line **own line**    
+  ❌ Not allowed:  
+  ```html
+  <p>
+      Full Name {{ Person.Name }} {{ Person.Surname }}
+  </p>
+  ```  
+  ✅ Allowed:  
   ```html
   <p>Name: {{ Person.Name }}</p>
   ```
-
 ---
 
 ## 📐 Template Syntax
