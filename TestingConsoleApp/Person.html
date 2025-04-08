@@ -75,7 +75,7 @@
     <p><strong>Age:</strong> {{ Person.Age }}</p>
 </div>
 
-<pdf:if>
+<pdf-if>
     % Person.Age < 18 %
     {
     <p> {{ Person.Name }} can't drink </p>
@@ -90,14 +90,14 @@
     {
     <p> {{ Person.Name }} can drink anywhere</p>
     }
-</pdf:if>
+</pdf-if>
 
-<pdf:for start={0} end={Person.Numbers.Count} as={index}>
+<pdf-for start={0} end={Person.Numbers.Count} as={index}>
     <p>
         <span>Number at index {{ index }}:</span>
         <span>{{ Person.Numbers[index] }}</span>
     </p>
-</pdf:for>
+</pdf-for>
 
 <table>
     <tr>
@@ -106,14 +106,14 @@
         <th>Age</th>
         <th>Nickname</th>
     </tr>
-    <pdf:foreach collection={Person.Children} as={child}>
+    <pdf-foreach collection={Person.Children} as={child}>
         <tr>
             <td>{{ child.Name }}</td>
             <td>{{ child.Surname }}</td>
             <td>{{ child.Age }}</td>
             <td>{{ child.NickName }}</td>
         </tr>
-    </pdf:foreach>
+    </pdf-foreach>
 </table>
 </body>
 </html>

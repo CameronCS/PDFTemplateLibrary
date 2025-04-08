@@ -11,6 +11,10 @@ namespace TestingConsoleApp {
         public List<Child> Children { get; set; } = []; 
         
         [PDFCall] public string GetFullName() {
+            return this.ConcatName();
+        }
+
+        public string ConcatName() {
             return this.Name + " " + this.Surname;
         }
     }
