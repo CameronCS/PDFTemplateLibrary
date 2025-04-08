@@ -73,9 +73,9 @@
 <div class="section">
     <h2>Team Members</h2>
     <ul>
-        <pdf:for start={0} end={ProjectReport.TeamMembers.Count} as={i}>
+        <pdf-for start={0} end={ProjectReport.TeamMembers.Count} as={i}>
             <li>{{ ProjectReport.TeamMembers[i] }}</li>
-        </pdf:for>
+        </pdf-for>
     </ul>
 </div>
 
@@ -87,24 +87,13 @@
             <th>Assigned To</th>
             <th>Status</th>
         </tr>
-        <pdf:foreach collection={ProjectReport.Tasks} as={task}>
+        <pdf-foreach collection={ProjectReport.Tasks} as={task}>
             <tr>
                 <td>{{ task.Title }}</td>
                 <td>{{ task.AssignedTo }}</td>
-                <td>
-                    <pdf:if>
-                        % task.IsCompleted %
-                        {
-                        <span class="completed">Completed</span>
-                        }
-                        % else %
-                        {
-                        <span class="incomplete">Incomplete</span>
-                        }
-                    </pdf:if>
-                </td>
+                <td>{{ task.GetCompleteString }} </td>
             </tr>
-        </pdf:foreach>
+        </pdf-foreach>
     </table>
 </div>
 
