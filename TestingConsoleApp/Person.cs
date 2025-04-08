@@ -1,6 +1,7 @@
 ﻿using PDFTemplateLibrary.Attributes;
 
 namespace TestingConsoleApp {
+    // This is a demo project to show the demo branch
     internal class Person(int id, string name, string surname, int age) {
         [PDFIgnore] private int Id { get; set; } = id;
         public string UID => $"{name[0]}{name[^1]}{Id}{age}{surname[0]}{surname[^1]}";
