@@ -3,6 +3,7 @@ using System.Text;
 using PDFTemplateLibrary.PDFMembers;
 using PDFTemplateLibrary.Helpers;
 using PDFTemplateLibrary.Iterators;
+using PDFTemplateLibrary.PDFRules;
 
 namespace PDFTemplateLibrary;
 
@@ -35,7 +36,20 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
     private void RenderPDFLines() {
         List<string> pdfLines = [];
         for (int currentLineNumber = 0; currentLineNumber < this._templateLines.Length; currentLineNumber++) {
-            string line = this._templateLines[currentLineNumber];
+            string line = this._templateLines[currentLineNumber].Trim();
+            if (line.StartsWith(PDFCheck.PDF_RULE_MODEL_NAME)) {
+                ModelNameRule modelNameRule = ModelRuleHelper.GetModelNameRule(line);
+                Dictionary<string, PDFMemberType> temp = [];
+                foreach (KeyValuePair<string, PDFMemberType> objectReference in this._objectReference) {
+                    if (objectReference.Key.Contains(modelNameRule.ModelName.ToLower())) {
+                        temp[objectReference.Key.Replace(modelNameRule.ModelName.ToLower(), modelNameRule.ModelAs.ToLower())] = objectReference.Value;
+                    } else {
+                        temp[objectReference.Key] = objectReference.Value;
+                    }
+                }
+                this._objectReference = temp;
+            }
+            
             if (this.IsPdfIF(line)) {
                 int ifStartIndex = currentLineNumber;
                 int ifEndIndex = this.FindEndIndex(currentLineNumber, PDFCheck.PDF_IF_CLOSE_TAG);

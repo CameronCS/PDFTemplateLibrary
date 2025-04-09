@@ -20,7 +20,7 @@ public class TaskItem {
     public string AssignedTo { get; set; }
     public bool IsCompleted { get; set; }
 
-    public string GetCompleteString {
-        get => IsCompleted ? "<span class='completed'>Completed</span>" : "<span class='incomplete'>Incomplete</span>";
+    [PDFCall] public string GetCompleteString() {
+        return IsCompleted ? "<span class='completed'>Completed</span>" : "<span class='incomplete'>Incomplete</span>";
     }
 }

@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Person ID - {{Person.uid}}</title>
+    <pdf-rule-model-name modelname="Person" as="p" />
+    
+    <title>p ID - {{p.uid}}</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -67,35 +69,35 @@
     </style>
 </head>
 <body>
-<p class="highlight">Full Name: {{ Person.GetFullName() }}</p>
+<p class="highlight">Full Name: {{ p.GetFullName() }}</p>
 
 <div>
-    <p><strong>Name:</strong> {{ Person.Name }}</p>
-    <p><strong>Surname:</strong> {{ Person.Surname }}</p>
-    <p><strong>Age:</strong> {{ Person.Age }}</p>
+    <p><strong>Name:</strong> {{ p.Name }}</p>
+    <p><strong>Surname:</strong> {{ p.Surname }}</p>
+    <p><strong>Age:</strong> {{ p.Age }}</p>
 </div>
 
 <pdf-if>
-    % Person.Age < 18 %
+    % p.Age < 18 %
     {
-    <p> {{ Person.Name }} can't drink </p>
+    <p> {{ p.Name }} can't drink </p>
     }
 
-    % Person.Age >= 21 %
+    % p.Age >= 21 %
     {
-    <p> {{ Person.Name }} can drink but not in the U.S </p>
+    <p> {{ p.Name }} can drink but not in the U.S </p>
     }
 
     % else %
     {
-    <p> {{ Person.Name }} can drink anywhere</p>
+    <p> {{ p.Name }} can drink anywhere</p>
     }
 </pdf-if>
 
-<pdf-for start={0} end={Person.Numbers.Count} as={index}>
+<pdf-for start={0} end={p.Numbers.Count} as={index}>
     <p>
         <span>Number at index {{ index }}:</span>
-        <span>{{ Person.Numbers[index] }}</span>
+        <span>{{ p.Numbers[index] }}</span>
     </p>
 </pdf-for>
 
@@ -106,7 +108,7 @@
         <th>Age</th>
         <th>Nickname</th>
     </tr>
-    <pdf-foreach collection={Person.Children} as={child}>
+    <pdf-foreach collection={p.Children} as={child}>
         <tr>
             <td>{{ child.Name }}</td>
             <td>{{ child.Surname }}</td>

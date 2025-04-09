@@ -32,6 +32,7 @@ public class PDFMemberHelper {
                                     objectReference[itemKey] = new(itemKey, itemType, itemRef) { MemberTypes = null };
                                 } else {
                                     GetPDFMemberTypeFromProperty(ref itemRef, itemType, ref objectReference, itemKey);
+                                    GetPDFMemberTypeFromMethod(ref itemRef, itemType, ref objectReference, itemKey);
                                 }
                                 index++;
                             }
