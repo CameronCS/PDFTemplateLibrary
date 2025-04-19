@@ -38,18 +38,9 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
         for (int currentLineNumber = 0; currentLineNumber < this._templateLines.Length; currentLineNumber++) {
             string line = this._templateLines[currentLineNumber].Trim();
             if (line.StartsWith(PDFCheck.PDF_RULE_MODEL_NAME)) {
-                ModelNameRule modelNameRule = ModelRuleHelper.GetModelNameRule(line);
-                Dictionary<string, PDFMemberType> temp = [];
-                foreach (KeyValuePair<string, PDFMemberType> objectReference in this._objectReference) {
-                    if (objectReference.Key.Contains(modelNameRule.ModelName.ToLower())) {
-                        temp[objectReference.Key.Replace(modelNameRule.ModelName.ToLower(), modelNameRule.ModelAs.ToLower())] = objectReference.Value;
-                    } else {
-                        temp[objectReference.Key] = objectReference.Value;
-                    }
-                }
-                this._objectReference = temp;
+                this.ApplyPDFNamingRules(line);
             }
-            
+
             if (this.IsPdfIF(line)) {
                 int ifStartIndex = currentLineNumber;
                 int ifEndIndex = this.FindEndIndex(currentLineNumber, PDFCheck.PDF_IF_CLOSE_TAG);
@@ -62,6 +53,7 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
                 currentLineNumber = ifEndIndex;
                 continue;
             }
+
             if (this.IsPdfEndIF(line)) continue;
 
             if (this.IsPDFForEach(line)) {
@@ -70,10 +62,10 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
                 IterationMember iteration = IterationHelper.GetIterationItem(line.Trim());
                 pdfLines.AddRange(this.HandlePDFForEach(forStartIndex, forEndIndex, iteration));
                 currentLineNumber = forEndIndex;
+                continue;
             }
+
             if (this.IsPDFEndFOrEach(line)) continue;
-
-
 
             if (this.IsPDFFor(line)) {
                 IterationMember iteration = IterationHelper.GetIterationItem(line.Trim());
@@ -82,13 +74,29 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
                 int forEndIndex = this.FindEndIndex(forStartIndex, PDFCheck.PDF_FOR_CLOSE_TAG);
                 pdfLines.AddRange(this.HandlePDFFor(forStartIndex, forEndIndex, iteration));
                 currentLineNumber = forEndIndex;
+                continue;
             }
+
             if (this.IsPDFEndFor(line)) continue;
 
             pdfLines.Add(this.IsTemplateLine(line) ? this.RenderLine(line) : line);
         }
 
         this._templateLines = [.. pdfLines];
+    }
+
+    private void ApplyPDFNamingRules(string line) {
+        ModelNameRule modelNameRule = ModelRuleHelper.GetModelNameRule(line);
+        Dictionary<string, PDFMemberType> temp = [];
+        foreach (KeyValuePair<string, PDFMemberType> objectReference in this._objectReference) {
+            if (objectReference.Key.Contains(modelNameRule.ModelName.ToLower())) {
+                temp[objectReference.Key.Replace(modelNameRule.ModelName.ToLower(), modelNameRule.ModelAs.ToLower())] = objectReference.Value;
+            } else {
+                temp[objectReference.Key] = objectReference.Value;
+            }
+        }
+
+        this._objectReference = temp;
     }
 
     private bool IsPdfIF(string lineCheck) => lineCheck.Contains(PDFCheck.PDF_IF_OPEN_TAG);
@@ -130,9 +138,14 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
 
     private string RenderLine(string line) {
         string[] lineSections = PDFHelper.GetLineSections(line);
+        
         PDFMemberType memberType = _objectReference[lineSections[PDFHelper.VALUE_LINE_SECTION].ToLower()];
 
         string templateLine = $"{lineSections[PDFHelper.LEFT_LINE_SECTION]}{memberType.Value}{lineSections[PDFHelper.RIGHT_LINE_SECTION]}";
+        if (templateLine.Contains("{{") && templateLine.Contains("}}"))
+        {
+            templateLine = this.RenderLine(templateLine);
+        }
         return templateLine;
     }
 
@@ -157,40 +170,38 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
         }
 
         this._objectReference.Remove(iterationMember.As);
-        
+
         return [.. forLines];
     }
-    
+
     private bool IsPDFForEach(string line) => line.Trim().StartsWith(PDFCheck.PDF_FOREACH_OPEN_TAG);
     private bool IsPDFEndFOrEach(string line) => line.Trim().StartsWith(PDFCheck.PDF_FOREACH_OPEN_TAG);
-    
-        private string[] HandlePDFForEach(int startIndex, int EndIndex, IterationMember iterationMember) {
-            List<string> foreachLines = [];
-    
-            
-            string[] forEachMembers = iterationMember.As.Split("||");
-            string collectionName = forEachMembers[0];
-            string itemName = forEachMembers[1];
-            iterationMember.End = (int)this._objectReference[iterationMember.EndEvaluator.ToLower()].Value;
-            while (iterationMember.Current != iterationMember.End) {
-                string forLine = "";
-                for (int forIndex = startIndex + 1; forIndex < EndIndex; forIndex++) {
-                    forLine = this._templateLines[forIndex];
-                    if (this.IsTemplateLine(forLine)) {
-                        if (forLine.Contains(collectionName)) {
-                            forLine = forLine.Replace(collectionName, $"{itemName}[{iterationMember.Current}]");
-                        }
-    
-                        foreachLines.Add(this.RenderLine(forLine));
-                    } else {
-                        foreachLines.Add(forLine);
+    private string[] HandlePDFForEach(int startIndex, int EndIndex, IterationMember iterationMember) {
+        List<string> foreachLines = [];
+        string[] forEachMembers = iterationMember.As.Split("||");
+        string collectionName = forEachMembers[0];
+        string itemName = forEachMembers[1];
+        iterationMember.End = (int)this._objectReference[iterationMember.EndEvaluator.ToLower()].Value;
+        while (iterationMember.Current != iterationMember.End) {
+            string forLine = "";
+            for (int forIndex = startIndex + 1; forIndex < EndIndex; forIndex++) {
+                forLine = this._templateLines[forIndex];
+                if (this.IsTemplateLine(forLine)) {
+                    if (forLine.Contains(collectionName)) {
+                        forLine = forLine.Replace(collectionName, $"{itemName}[{iterationMember.Current}]");
                     }
+
+                    foreachLines.Add(this.RenderLine(forLine));
+                } else {
+                    foreachLines.Add(forLine);
                 }
-    
-                iterationMember.Current++;
             }
-            return [.. foreachLines];
+
+            iterationMember.Current++;
         }
+
+        return [.. foreachLines];
+    }
 
     private int FindEndIndex(int startIndex, string closeTag) {
         for (int i = startIndex; i < this._templateLines.Length; i++) {
@@ -213,14 +224,11 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
         throw new Exception("If statement body never terminated");
     }
 
-
-    public PdfDocument GenerateDocument()
-    {
+    public PdfDocument GenerateDocument() {
         string pathToWkHtmlToPDF = "./wkhtmltopdf/wkhtmltopdf.exe";
         string htmlContent = string.Join(Environment.NewLine, this._templateLines);
 
-        ProcessStartInfo processStartInfo = new()
-        {
+        ProcessStartInfo processStartInfo = new() {
             FileName = pathToWkHtmlToPDF,
             Arguments = "-q - -",
             UseShellExecute = false,
@@ -236,8 +244,7 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
         process.StandardInput.AutoFlush = true;
 
         // Write HTML to stdin and close the stream
-        using (StreamWriter writer = new(process.StandardInput.BaseStream, Encoding.UTF8))
-        {
+        using (StreamWriter writer = new(process.StandardInput.BaseStream, Encoding.UTF8)) {
             writer.Write(htmlContent);
         }
 
@@ -247,8 +254,7 @@ public class PdfDocumentGenerator(string templatePath, string fileName) {
         string errorOutput = process.StandardError.ReadToEnd();
         process.WaitForExit();
 
-        if (process.ExitCode != 0)
-        {
+        if (process.ExitCode != 0) {
             throw new Exception($"PDF Creation exited with code {process.ExitCode}\n{errorOutput}");
         }
 

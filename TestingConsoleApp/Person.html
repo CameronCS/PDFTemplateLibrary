@@ -96,6 +96,17 @@
 
 <pdf-for start={0} end={p.Numbers.Count} as={index}>
     <p>
+        <pdf-if>
+            % p.Numbers[index] < 20 %
+            {
+            <p> {{ index }} is less than 23  </p>
+            }
+
+            % else %
+            {
+            <p> {{ index }} can drink anywhere</p>
+            }
+        </pdf-if>
         <span>Number at index {{ index }}:</span>
         <span>{{ p.Numbers[index] }}</span>
     </p>
