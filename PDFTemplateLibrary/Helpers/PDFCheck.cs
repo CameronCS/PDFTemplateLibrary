@@ -14,5 +14,7 @@ namespace PDFTemplateLibrary.Helpers {
         
         public const string PDF_FOREACH_OPEN_TAG = "<pdf-foreach";
         public const string PDF_FOREACH_CLOSE_TAG = "</pdf-foreach>";
+
+        public const string PDF_RULE_MODEL_NAME = "<pdf-rule-model-name";
     }
 }

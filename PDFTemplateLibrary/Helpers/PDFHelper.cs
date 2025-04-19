@@ -28,7 +28,8 @@ namespace PDFTemplateLibrary.Helpers {
         public static int[] GetConditionIndices(string[] ifBody) {
             List<int> indices = [];
             for (int i = 0; i < ifBody.Length; i++) {
-                if (ifBody[i].Contains('%')) {
+                string trimline = ifBody[i].Trim();
+                if (trimline.StartsWith('%') && trimline.EndsWith('%')) {
                     indices.Add(i);
                 }
             }
