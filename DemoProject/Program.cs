@@ -1,14 +1,15 @@
-﻿using PDFTemplateLibrary;
+﻿using DemoProject;
+using PDFTemplateLibrary;
 
-namespace Application;
+namespace DemoProject;
 
-class Program {
+static class Program {
     public static void Main() {
         Person person = new() {
-            Name = "Cameron",
+            FirstName = "Cameron",
             Surname = "Stocks",
             Age = 22,
-            ID_Number = "1234567890123",
+            IDNumber = "1234567890123",
             Jobs = [
                 new Job { CompanyName = "Test Company 1", Description = "Test Description 1", TimeAtJob = "2 Years", Salary = 5000, Title = "Worker"},
                 new Job { CompanyName = "Test Company 2", Description = "Test Description 2", TimeAtJob = "1 Year", Salary = 5000, Title = "Worker"},
@@ -18,7 +19,7 @@ class Program {
             ]
         };
 
-        PdfDocument document = TemplateRenderer.RenderDocumentFromString("PersonReport.html", "PersonReport", person);
+        PdfDocument document = TemplateRenderer.RenderDocumentFromString(Resources.TestTemplate, "PersonReport", person);
         File.WriteAllBytes(document.FileName, document.PDF);
     }    
 }

@@ -60,11 +60,27 @@ namespace DemoProject {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///    &lt;title&gt;Person&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///    &lt;header&gt;
+        ///        &lt;h1&gt;
+        ///            Employment Report for 
+        ///            {{ Person.FirstName }} 
+        ///            {{ Person.Surname }}
+        ///        &lt;/h1&gt;
+        ///        &lt;p&gt;ID Number: {{ Person.IDNumber }}&lt;/p&gt;
+        ///    &lt;/header&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
         /// </summary>
-        internal static string TestHTML {
+        internal static string TestTemplate {
             get {
-                return ResourceManager.GetString("TestHTML", resourceCulture);
+                return ResourceManager.GetString("TestTemplate", resourceCulture);
             }
         }
     }

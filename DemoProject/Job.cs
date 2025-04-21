@@ -1,4 +1,4 @@
-﻿namespace Application;
+﻿namespace DemoProject;
 
 public class Job {
     public string CompanyName { get; set; }

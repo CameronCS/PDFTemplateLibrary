@@ -1,12 +1,12 @@
 ﻿using PDFTemplateLibrary.Attributes;
 
-namespace Application;
+namespace DemoProject;
 
 public class Person {
-    public string Name { get; set; }
+    public string FirstName { get; set; }
     public string Surname { get; set; }
     public int Age { get; set; }
-    public string ID_Number { get; set; }
+    public string IDNumber { get; set; }
     public List<Job> Jobs { get; set; }
     
     [PDFCall] public decimal GetTotalSalary() {
