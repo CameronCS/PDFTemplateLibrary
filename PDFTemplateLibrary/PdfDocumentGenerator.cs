@@ -34,7 +34,6 @@ public class PdfDocumentGenerator {
         this.GetFieldMembers(objectType);
 
         this.RenderPDFLines();
-        File.WriteAllLines("FinishedPersonPDF.html", this._templateLines);
     }
 
     private void GetFieldMembers(Type dataClassType) {
@@ -147,15 +146,17 @@ public class PdfDocumentGenerator {
     private bool IsTemplateLine(string line) => line.Contains("{{") && line.Contains("}}");
 
     private string RenderLine(string line) {
-        string[] lineSections = PDFHelper.GetLineSections(line);
-        
-        PDFMemberType memberType = _objectReference[lineSections[PDFHelper.VALUE_LINE_SECTION].ToLower()];
+        string templateLine;
+        do {
+            string[] lineSections = PDFHelper.GetLineSections(line);
 
-        string templateLine = $"{lineSections[PDFHelper.LEFT_LINE_SECTION]}{memberType.Value}{lineSections[PDFHelper.RIGHT_LINE_SECTION]}";
-        if (templateLine.Contains("{{") && templateLine.Contains("}}"))
-        {
-            templateLine = this.RenderLine(templateLine);
-        }
+            PDFMemberType memberType = _objectReference[lineSections[PDFHelper.VALUE_LINE_SECTION].ToLower()];
+
+            templateLine = $"{lineSections[PDFHelper.LEFT_LINE_SECTION]}{memberType.Value}{lineSections[PDFHelper.RIGHT_LINE_SECTION]}";
+            if (templateLine.Contains("{{") && templateLine.Contains("}}")) {
+                templateLine = this.RenderLine(templateLine);
+            }
+        } while (templateLine.Contains("{{") && line.Contains("}}"));
         return templateLine;
     }
 
@@ -186,6 +187,7 @@ public class PdfDocumentGenerator {
 
     private bool IsPDFForEach(string line) => line.Trim().StartsWith(PDFCheck.PDF_FOREACH_OPEN_TAG);
     private bool IsPDFEndFOrEach(string line) => line.Trim().StartsWith(PDFCheck.PDF_FOREACH_OPEN_TAG);
+
     private string[] HandlePDFForEach(int startIndex, int EndIndex, IterationMember iterationMember) {
         List<string> foreachLines = [];
         string[] forEachMembers = iterationMember.As.Split("||");

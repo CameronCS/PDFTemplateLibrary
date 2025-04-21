@@ -8,12 +8,20 @@ namespace PDFTemplateLibrary.Helpers {
         public const int VALUE_LINE_SECTION = 1;
         public const int RIGHT_LINE_SECTION = 2;
 
-        public static string[] GetLineSections(string line) {
-            string[] initialSplit = line.Split("{{");
-            string leftHandSide = initialSplit[0];
-            string[] leftOver = initialSplit[1].Split("}}");
-            string templateValue = leftOver[0].Trim();
-            string rightHandSide = leftOver[1];
+        public static string[] GetLineSections(string line)
+        {
+            int start = line.IndexOf("{{");
+            if (start == -1)
+                return [line];
+
+            int end = line.IndexOf("}}", start + 2);
+            if (end == -1)
+                return [line];
+
+            string leftHandSide = line.Substring(0, start);
+            string templateValue = line.Substring(start + 2, end - start - 2).Trim();
+            string rightHandSide = line.Substring(end + 2);
+
             return [leftHandSide, templateValue, rightHandSide];
         }
 
