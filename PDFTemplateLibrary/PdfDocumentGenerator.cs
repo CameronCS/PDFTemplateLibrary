@@ -7,14 +7,24 @@ using PDFTemplateLibrary.PDFRules;
 
 namespace PDFTemplateLibrary;
 
-public class PdfDocumentGenerator(string templatePath, string fileName) {
-    private readonly string _fileName = fileName;
+public class PdfDocumentGenerator {
+    private readonly string _fileName;
     private object _dataClass = new();
 
-    public string[] _templateLines = File.ReadAllLines(templatePath);
+    public string[] _templateLines;
     private byte[] _data = [];
 
     private Dictionary<string, PDFMemberType> _objectReference = [];
+
+    public PdfDocumentGenerator(string templatePath, string fileName) {
+        this._templateLines = File.ReadAllLines(templatePath);
+        this._fileName = fileName;
+    }
+
+    public PdfDocumentGenerator(string[] templateLines, string fileName) {
+        this._templateLines = templateLines;
+        this._fileName = fileName;
+    }
 
     public void CreatePDFObject(object pdfDataClass) {
         ArgumentNullException.ThrowIfNull(pdfDataClass);
